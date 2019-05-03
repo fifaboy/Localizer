@@ -24,6 +24,9 @@ class reorg(BaseOp):
     def forward(self):
         inp = self.inp.out
         s = self.lay.stride
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        sess = tf.Session(config=config)
         self.out = tf.extract_image_patches(
             inp, [1,s,s,1], [1,s,s,1], [1,1,1,1], 'VALID')
 
@@ -66,6 +69,9 @@ class local(BaseOp):
 class convolutional(BaseOp):
     def forward(self):
         pad = [[self.lay.pad, self.lay.pad]] * 2;
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        sess = tf.Session(config=config)
         temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
         temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
             name = self.scope, strides = [1] + [self.lay.stride] * 2 + [1])

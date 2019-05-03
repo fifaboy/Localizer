@@ -27,11 +27,11 @@ def loss(self, net_out):
     anchors = m['anchors']
 
     print('{} loss hyper-parameters:'.format(m['model']))
-    print('\tH       = {}'.format(H))
-    print('\tW       = {}'.format(W))
-    print('\tbox     = {}'.format(m['num']))
-    print('\tclasses = {}'.format(m['classes']))
-    print('\tscales  = {}'.format([sprob, sconf, snoob, scoor]))
+    print('    H       = {}'.format(H))
+    print('    W       = {}'.format(W))
+    print('    box     = {}'.format(m['num']))
+    print('    classes = {}'.format(m['classes']))
+    print('    scales  = {}'.format([sprob, sconf, snoob, scoor]))
 
     size1 = [None, HW, B, C]
     size2 = [None, HW, B]
@@ -103,5 +103,8 @@ def loss(self, net_out):
     loss = tf.multiply(loss, wght)
     loss = tf.reshape(loss, [-1, H*W*B*(4 + 1 + C)])
     loss = tf.reduce_sum(loss, 1)
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    sess = tf.Session(config=config)
     self.loss = .5 * tf.reduce_mean(loss)
     tf.summary.scalar('{} loss'.format(m['model']), self.loss)
